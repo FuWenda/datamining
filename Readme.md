@@ -9,3 +9,7 @@
 - Clustering.py：聚类分析以及可视化，包括K-mean和高斯混合模型
 - Classifation.py：决策树、朴素贝叶斯、支持向量机分类
 - NN_Classifation.py:神经网络分类
+
+
+
+requirements.txt里列出了项目必要的库
