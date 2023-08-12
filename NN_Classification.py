@@ -2,64 +2,35 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.model_selection import KFold
-from proprecess import dataset
+from preprocess import dataset
 
+from sklearn.metrics import precision_score, recall_score, f1_score
 
+from model import *
 
 def predict(model, data_loader):
     predictions = []
     model.eval()  # 设置模型为评估模式
     with torch.no_grad():
         for inputs, _ in data_loader:
-            # inputs = inputs.to(device)  # 将输入移动到设备上（如果使用GPU）
+            inputs = inputs.to(device)  # 将输入移动到设备上（如果使用GPU）
             outputs = model(inputs)  # 模型前向传播
             _, predicted_labels = torch.max(outputs, dim=1)  # 获取预测标签
             predictions.extend(predicted_labels.tolist())
     return predictions
-class Net1(nn.Module):
-    def __init__(self):
-        super(Net1,self).__init__()
+device = 'cuda' if torch.cuda.is_available() else 'cup'
+print(device)
 
-        self.work = nn.Sequential(
-            nn.Linear(278, 64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
-            nn.ReLU(),
-            nn.Linear(32, 16))
-    def forward(self, x):
-        out = self.work(x)
-        return out
-
-
-class Net2(nn.Module):
-    def __init__(self, input_size=278, output_size=16):
-        super(Net2, self).__init__()
-        self.tree = nn.Sequential(
-            nn.Linear(input_size, 512),
-            nn.ReLU(),
-            nn.Linear(512, 256),
-            nn.ReLU(),
-            nn.Linear(256,32),
-            nn.ReLU(),
-            nn.Linear(32, output_size),
-        )
-
-    def forward(self, x):
-        x = self.tree(x)
-        return x
-
-# 假设你已经定义好了你的神经网络模型：model
-
-model=Net1()
+model=Net2().to(device)
 # 定义 Loss 函数和优化器
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss().to(device)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # 定义训练函数
 def train(model, train_loader, optimizer, criterion):
     model.train()
     for inputs, targets in train_loader:
-        targets=targets
+        inputs, targets=inputs.to(device),targets.to(device)
         optimizer.zero_grad()
 
         # 前向传播
@@ -77,7 +48,7 @@ def test(model, test_loader):
     total = 0
     with torch.no_grad():
         for inputs, targets in test_loader:
-            targets = targets
+            inputs, targets=inputs.to(device),targets.to(device)
             outputs = model(inputs)
             _, predicted = torch.max(outputs.data, 1)
             total += targets.size(0)
@@ -93,8 +64,7 @@ def test(model, test_loader):
 # 定义 5 折交叉验证
 kfold = KFold(n_splits=5, shuffle=True,random_state=43)
 
-#python
-from sklearn.metrics import precision_score, recall_score, f1_score
+
 
 acc_count = 0.0
 precision_count = 0.0
@@ -113,7 +83,7 @@ for fold, (train_indices, test_indices) in enumerate(kfold.split(dataset)):
     model = model  # 请确保此处正确设置了您要使用的模型
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-    for epoch in range(30):  # 30个 epochs，可以根据需要进行修改
+    for epoch in range(30):
         train(model, train_loader, optimizer, criterion)
 
     accuracy = test(model, test_loader)

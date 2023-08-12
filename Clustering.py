@@ -19,7 +19,12 @@ X_norm = scaler.fit_transform(X)
 # 主成分分析
 pca = PCA(n_components=2)
 X_pca = pca.fit_transform(X_norm)
+
+#
 X=X_pca
+pca=" With PCA"
+# X=X_norm#不使用PCA压缩
+# pca=""
 warnings.filterwarnings('ignore')#这里交叉验证时，样本数量太少会出现警告，忽略这个警告
 # 聚类算法
 #K-mean
@@ -41,7 +46,6 @@ db_index = davies_bouldin_score(X, y_pred1)
 print("Davies-Bouldin指数为：", db_index)#[0,正无穷]之间，值越小越好
 
 print("高斯混合模型：")
-print("k-mean")
 silhouette_avg = silhouette_score(X, y_pred2)
 print("轮廓系数为：", silhouette_avg)
 # 计算Davies-Bouldin指数
@@ -52,13 +56,12 @@ print("Davies-Bouldin指数为：", db_index)
 plt.scatter(X[:, 0], X[:, 1], c=y_pred1, cmap=plt.cm.Set1)
 plt.xlabel('Feature 1')
 plt.ylabel('Feature 2')
-plt.title('K-Means Clustering')
+plt.title('K-Means Clustering'+pca)
 plt.show()
 
 plt.scatter(X[:, 0], X[:, 1], c=y_pred2, cmap=plt.cm.Set1)
 plt.xlabel('Feature 1')
 plt.ylabel('Feature 2')
-plt.title('GMM Clustering')
+plt.title('GMM Clustering'+pca)
 plt.show()
-
 

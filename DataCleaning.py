@@ -46,10 +46,11 @@ for row in range(452):#452
 df_new = data_df.drop('Col14', axis=1)#删除
 df_new.loc[:, list] = subset1
 df_new=df_new.astype('float32')
+
 print('数据清洗完毕')
 
 
-#数据的可视化
+# # 数据的可视化
 # print("\nNames file contents:")
 # print(names)
 # def bar(data_df):
@@ -60,6 +61,6 @@ print('数据清洗完毕')
 #     plt.hist(last_point, bins=20, edgecolor='black')
 #     plt.xlabel("Value")
 #     plt.ylabel("Frequency")
-#     plt.title("Distribution of Last Point's Values")
+#     plt.title("Categorical bar chart of arrhythmias")
 #     plt.show()
 # bar(data_df)
